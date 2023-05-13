@@ -1,0 +1,7 @@
+.testMaptest {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  transform: translate(50%, 50%);
+  z-index: 10000;
+}

@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" type="text/css" href="./style.css">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.74.0/dist/L.Control.Locate.min.css" />
+
+    <link rel="stylesheet" href="./lib/leaflet-measure.css">
+
+    <link rel="stylesheet" href="L.Control.MousePosition.css">
+
+    <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css'
+        rel='stylesheet' />
+
+    <link rel="stylesheet" href="L.Control.Zoomslider.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ==" crossorigin=""/>
+    <link rel="stylesheet" href="./lib/leaflet.measure.css">
+
+
+    <title>Leaflet Draw</title>
+
+    <style>
+        html,
+        body,
+        #map {
+            height: 92.3vh;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .leaflet-popup-content {
+            width: 200px;
+            padding: 5px;
+            height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: start;
+            gap: 5px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            align-items: start;
+        }
+
+        .legend {
+
+            padding: 6px 8px;
+
+            font: 14px Arial, Helvetica, sans-serif;
+
+            background: white;
+
+            background: rgba(255, 255, 255, 0.8);
+
+            line-height: 24px;
+
+            color: #555;
+
+        }
+
+        .legend h4 {
+
+            text-align: center;
+
+            font-size: 16px;
+
+            margin: 2px 12px 8px;
+
+            color: black;
+
+        }
+
+
+
+        .legend span {
+
+            position: relative;
+
+            bottom: 3px;
+
+        }
+
+
+
+        .legend i {
+
+            width: 18px;
+
+            height: 18px;
+
+            float: left;
+
+            margin: 0 8px 0 0;
+
+            opacity: 1;
+
+        }
+
+
+
+        .legend i.icon {
+
+            background-size: 18px;
+
+            background-color: rgba(255, 255, 255, 1);
+
+        }
+
+
+
+        header {
+
+            height: 6vh;
+
+            margin: 0%;
+
+            padding: 0%;
+
+        }
+
+        .topnav {
+
+            background-color: #ffffff;
+
+            /* overflow: hidden;*/
+
+            padding-top: 0%;
+
+            margin-top: 0%;
+
+        }
+
+
+
+        /* Style the links inside the navigation bar */
+
+        .topnav a {
+
+            float: right;
+
+            color: #ff0000;
+
+            text-align: center;
+
+            padding: 14px 16px;
+
+            text-decoration: none;
+
+            font-size: 15px;
+
+            font-weight: 500;
+
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+        }
+
+
+
+        /* Change the color of links on hover */
+
+        .topnav a:hover {
+
+            background-color: #ddd;
+
+            color: black;
+
+        }
+
+
+
+        /* Add a color to the active/current link */
+
+        .topnav a.active {
+
+            background-color: #aa0404;
+
+            color: rgb(255, 255, 255);
+
+        }
+
+        .dateInput {
+            position: absolute;
+            bottom: 20px;
+            right: 5px;
+            background-color: white;
+            z-index: 1000;
+            height: 30px;
+            width: 120px;
+            border-style: black;
+            border-width: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav class="navContainer">
+
+            <div class="topnav">
+
+                <a href="../logout.php">DÉCONNEXION</a>
+
+                <a href="../acceuil/acceuil.php#contact">CONTACT</a>
+
+                <a class="active" href="#geololalisation">GÉOLOCALISATION</a>
+
+                <a href="../acceuil/acceuil.php#team">EQUIPE</a>
+
+                <a href="../acceuil/acceuil.php#services">NOS SERVICES</a>
+
+                <a href="../acceuil/acceuil.php#about">A PROPOS</a>
+
+            </div>
+
+        </nav>
+    </header>
+    <div id="map">
+        <!--
+
+        <div class="leaflet-control-fullscreen leaflet-bar leaflet-control"
+            style="position: absolute;bottom: 60px;left:10px"><a
+                class="leaflet-control-fullscreen-button leaflet-bar-part" href="#" title="View Fullscreen"></a></div>
+    </div>
+      -->
+</body>
+
+</html>
+
+<!-- leaflet js  -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.js"></script>
+
+
+
+<!-- leaflet draw plugin  -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.js"></script>
+
+<!--full screen plugin-->
+<script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
+
+
+<!--SOurce de la barre de recherche-->
+
+<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+
+<!--test-->
+<!-- <script src="test.js"></script> -->
+
+
+ <script src="./lib/leaflet.measure.js"></script> 
+ 
+
+<script>
+
+
+    // Initialize the map
+    var map = L.map('map',{
+        measureControl: true,
+    }).setView([30.32335755603471, -9.161567687988283], 13);
+    let dateSelectedValue;
+   
+
+
+    const dateInput = document.createElement("div")
+
+    dateInput.innerHTML =
+        '<input class="dateInput" id="dateSelected"  type="date" min="2020-01-02"  value="2021-01-01"/>'
+
+    document.getElementById("map").append(dateInput)
+    // Add the OpenStreetMap tiles
+    var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    })
+    osm.addTo(map);
+
+    // leaflet draw 
+    var drawnFeatures = new L.FeatureGroup();
+    map.addLayer(drawnFeatures);
+
+
+
+    var drawControl = new L.Control.Draw({
+        // position: "topright",
+        edit: {
+            featureGroup: drawnFeatures,
+            remove: true
+        },
+        draw: {
+            polygon: {
+                shapeOptions: {
+                    color: 'purple'
+                },
+                //  allowIntersection: false,
+                //  drawError: {
+                //   color: 'orange',
+                //   timeout: 1000
+                //  },
+            },
+            polyline: {
+                shapeOptions: {
+                    color: 'red'
+                },
+            },
+            rect: {
+                shapeOptions: {
+                    color: 'green'
+                },
+            },
+            circle: {
+                shapeOptions: {
+                    color: 'steelblue'
+                },
+            },
+        },
+
+    });
+
+    //Fullscreen
+
+
+    map.addControl(drawControl);
+
+    map.addControl(new L.Control.Fullscreen());
+
+    
+
+
+    // Barre de recherche (Geocoding)
+
+
+    L.Control.geocoder().addTo(map);
+
+
+
+    ///////////////////////////////////////////////////////
+    // satellite layer 
+
+    googleSat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+
+        maxZoom: 20,
+
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+
+    });
+
+    googleSat.addTo(map);
+    var baselayeradds = {
+
+
+
+        "OpenStreetMap": osm,
+
+
+
+        "Sattlite": googleSat,
+
+    };
+
+    var pntLayer;
+
+
+    pntLayer = L.imageOverlay('./image/Pente.png', [
+        [30.3281780339, -9.16426880161],
+        [30.3208040361, -9.15699183016]
+    ]) /*.addTo(map)*/ ;
+
+
+
+
+    var phLayer;
+
+
+    phLayer = L.imageOverlay('Ph.png', [
+        [30.3281780339, -9.16426880161],
+        [30.3208040361, -9.15699183016]
+    ]) /*.addTo(map)*/ ;
+
+    var moLayer;
+
+    moLayer = L.imageOverlay('MO.png', [
+        [30.3281780339, -9.16426880161],
+        [30.3208040361, -9.15699183016]
+    ]) /*.addTo(map)*/ ;
+
+    var TextureLayer;
+
+    TextureLayer = L.imageOverlay('Texture.png', [
+        [30.3281780339, -9.16426880161],
+        [30.3208040361, -9.15699183016]
+    ]) /*.addTo(map)*/ ;
+
+    var CECLayer;
+
+    CECLayer = L.imageOverlay('CEC.png', [
+        [30.3281780339, -9.16426880161],
+        [30.3208040361, -9.15699183016]
+    ]) /*.addTo(map)*/ ;
+
+
+
+    let dateTest = document.getElementById("dateSelected").value;
+
+    // Sentinel Hub WMS service
+    // tiles generated using EPSG:3857 projection - Leaflet takes care of that
+    let baseUrl = "https://services.sentinel-hub.com/ogc/wms/535eeb6f-6858-454f-aebd-6a1d5a74a2aa";
+    let sentinelHubObject = {
+        tileSize: 512,
+        attribution: '&copy; <a href="http://www.sentinel-hub.com/" target="_blank">Sentinel Hub</a>',
+        // urlProcessingApi:"https://services.sentinel-hub.com/ogc/wms/1d4de4a3-2f50-493c-abd8-861dec3ae6b2", 
+        maxcc: 20,
+        minZoom: 6,
+        maxZoom: 16,
+        preset: "GNDVI",
+        layers: "GNDVI",
+        // time: dateTest + "/2023-04-06"
+        time: "2022-10-01/2023-04-06",
+
+    }
+    let sentinelHub = L.tileLayer.wms(baseUrl, sentinelHubObject);
+    document.getElementById("dateSelected").onchange = () => {
+        dateTest = document.getElementById("dateSelected").value
+
+
+        sentinelHubObject.time = dateTest
+        sentinelHub = L.tileLayer.wms(baseUrl, sentinelHubObject)
+        
+
+        console.log("see", sentinelHub)
+
+
+    }
+
+    let ndvi = L.tileLayer.wms(baseUrl, {
+        tileSize: 512,
+        attribution: '&copy; <a href="http://www.sentinel-hub.com/" target="_blank">Sentinel Hub</a>',
+        // urlProcessingApi:"https://services.sentinel-hub.com/ogc/wms/1d4de4a3-2f50-493c-abd8-861dec3ae6b2", 
+        maxcc: 20,
+        minZoom: 6,
+        maxZoom: 16,
+        preset: "NDVI",
+        layers: "NDVI",
+        time: "2023-01-01/2023-04-01",
+
+    });
+    let chlo_a = L.tileLayer.wms(baseUrl, {
+        tileSize: 512,
+        attribution: '&copy; <a href="http://www.sentinel-hub.com/" target="_blank">Sentinel Hub</a>',
+        // urlProcessingApi:"https://services.sentinel-hub.com/ogc/wms/1d4de4a3-2f50-493c-abd8-861dec3ae6b2", 
+        maxcc: 20,
+        minZoom: 6,
+        maxZoom: 16,
+        preset: "CHLO_A",
+        layers: "CHLO_A",
+        time: "2022-10-01/2023-04-06",
+
+    });
+    let ndvii = L.tileLayer.wms(baseUrl, {
+        tileSize: 512,
+        attribution: '&copy; <a href="http://www.sentinel-hub.com/" target="_blank">Sentinel Hub</a>',
+        // urlProcessingApi:"https://services.sentinel-hub.com/ogc/wms/1d4de4a3-2f50-493c-abd8-861dec3ae6b2", 
+        maxcc: 20,
+        minZoom: 6,
+        maxZoom: 20,
+        preset: "SWIR",
+        layers: "SWIR",
+        time: "2021-03-01/2022-03-30",
+
+    });
+    let ndwi = L.tileLayer.wms(baseUrl, {
+        tileSize: 512,
+        attribution: '&copy; <a href="http://www.sentinel-hub.com/" target="_blank">Sentinel Hub</a>',
+        // urlProcessingApi:"https://services.sentinel-hub.com/ogc/wms/1d4de4a3-2f50-493c-abd8-861dec3ae6b2", 
+        maxcc: 20,
+        minZoom: 6,
+        maxZoom: 16,
+        preset: "NDWI",
+        layers: "NDWI",
+        time: "2023-01-01/2023-04-16",
+
+    });
+    let lai = L.tileLayer.wms(baseUrl, {
+        tileSize: 512,
+        attribution: '&copy; <a href="http://www.sentinel-hub.com/" target="_blank">Sentinel Hub</a>',
+        // urlProcessingApi:"https://services.sentinel-hub.com/ogc/wms/1d4de4a3-2f50-493c-abd8-861dec3ae6b2", 
+        maxcc: 20,
+        minZoom: 6,
+        maxZoom: 16,
+        preset: "LAI",
+        layers: "LAI",
+        time: "2022-04-01/2022-04-10",
+
+    });
+    let lst = L.tileLayer.wms(baseUrl, {
+        tileSize: 512,
+        attribution: '&copy; <a href="http://www.sentinel-hub.com/" target="_blank">Sentinel Hub</a>',
+        // urlProcessingApi:"https://services.sentinel-hub.com/ogc/wms/1d4de4a3-2f50-493c-abd8-861dec3ae6b2", 
+        maxcc: 20,
+        minZoom: 6,
+        maxZoom: 16,
+        preset: "LST",
+        layers: "LST",
+        time: "2023-01-01/2023-03-08",
+        // bbox:[-8.9867,30.4083, -9.0863, 30.4042]
+
+    });
+    let dem = L.tileLayer.wms(baseUrl, {
+        tileSize: 512,
+        attribution: '&copy; <a href="http://www.sentinel-hub.com/" target="_blank">Sentinel Hub</a>',
+        // urlProcessingApi:"https://services.sentinel-hub.com/ogc/wms/1d4de4a3-2f50-493c-abd8-861dec3ae6b2", 
+        maxcc: 20,
+        minZoom: 6,
+        maxZoom: 20,
+        preset: "NDMI",
+        layers: "NDMI",
+        time: "2023-01-01/2023-03-30",
+
+    });
+    let cyano = L.tileLayer.wms(baseUrl, {
+        tileSize: 512,
+        attribution: '&copy; <a href="http://www.sentinel-hub.com/" target="_blank">Sentinel Hub</a>',
+        // urlProcessingApi:"https://services.sentinel-hub.com/ogc/wms/1d4de4a3-2f50-493c-abd8-861dec3ae6b2", 
+        maxcc: 20,
+        minZoom: 6,
+        maxZoom: 20,
+        preset: "CYANO",
+        layers: "CYANO",
+        time: "2022-03-01/2023-03-10",
+
+    });
+    let turbidity = L.tileLayer.wms(baseUrl, {
+        tileSize: 512,
+        attribution: '&copy; <a href="http://www.sentinel-hub.com/" target="_blank">Sentinel Hub</a>',
+        // urlProcessingApi:"https://services.sentinel-hub.com/ogc/wms/1d4de4a3-2f50-493c-abd8-861dec3ae6b2", 
+        maxcc: 20,
+        minZoom: 6,
+        maxZoom: 20,
+        preset: "TURBIDITY",
+        layers: "TURBIDITY",
+        time: "2023-01-01/2023-04-10",
+       
+
+    });
+
+
+    let new_indice = L.tileLayer.wms(baseUrl, {
+        tileSize: 512,
+        attribution: '&copy; <a href="http://www.sentinel-hub.com/" target="_blank">Sentinel Hub</a>',
+        // urlProcessingApi:"https://services.sentinel-hub.com/ogc/wms/1d4de4a3-2f50-493c-abd8-861dec3ae6b2", 
+        maxcc: 20,
+        minZoom: 6,
+        maxZoom: 20,
+        preset: "NEW",
+        layers: "NEW",
+        time: "2021-01-01/2022-04-10",
+
+    });
+
+    var overlays = {
+
+
+
+        "Pente": pntLayer,
+
+        "Ph": phLayer,
+
+        "Matiere Organique": moLayer,
+
+        "Texture": TextureLayer,
+
+        "CEC": CECLayer,
+
+        'GNDVI': sentinelHub,
+
+        'NDVI': ndvi,
+
+        'CHLO_A': chlo_a,
+
+        'NDVII': ndvii,
+
+        'NDWI': ndwi,
+
+        'LAI': lai,
+
+        'LST': lst,
+
+        'NDMI': dem,
+        'NDRE': new_indice,
+
+        "CYANO": cyano,
+        "TURBIDITY": turbidity
+
+
+
+
+    };
+
+
+
+
+    pntLayer.setOpacity(0.6);
+
+    phLayer.setOpacity(0.6);
+
+    moLayer.setOpacity(0.5);
+
+    TextureLayer.setOpacity(0.5);
+
+    CECLayer.setOpacity(0.3);
+
+
+
+    L.control.layers(baselayeradds).addTo(map);
+
+    L.control.layers(overlays).addTo(map);
+
+
+
+
+
+    //Pente legend
+
+    var PenteLegend = L.control({
+        position: 'bottomleft'
+    });
+
+    PenteLegend.onAdd = function (map) {
+
+        var div = L.DomUtil.create('div', 'legend');
+
+        div.innerHTML += "<h4>Pente (°)</h4>";
+
+        div.innerHTML += '<i style="background: #006100"></i><span>0 - 1</span><br>';
+
+        div.innerHTML += '<i style="background: #7bab00"></i><span>1 - 6</span><br>';
+
+        div.innerHTML += '<i style="background: #ffff00"></i><span>6 - 13</span><br>';
+
+        div.innerHTML += '<i style="background: #ff9900"></i><span>13 - 20</span><br>';
+
+        div.innerHTML += '<i style="background: #ff2200"></i><span>20 - 38</span><br>';
+
+
+        return div;
+
+    };
+
+
+
+
+    //Ph legend
+
+    var PhLegend = L.control({
+        position: 'bottomleft'
+    });
+
+    PhLegend.onAdd = function (map) {
+
+        var div = L.DomUtil.create('div', 'legend');
+
+        div.innerHTML += "<h4>Ph</h4>";
+
+        div.innerHTML += '<i style="background: #c44539"></i><span>7</span><br>';
+
+        div.innerHTML += '<i style="background: #f0bc8b"></i><span>8</span><br>';
+
+        div.innerHTML += '<i style="background: #bfc3c7"></i><span>9</span><br>';
+
+        div.innerHTML += '<i style="background: #3462cf"></i><span>10</span><br>';
+
+        return div;
+
+    };
+
+
+
+    //Mo legend
+
+    var MoLegend = L.control({
+        position: 'bottomleft'
+    });
+
+    MoLegend.onAdd = function (map) {
+
+        var div = L.DomUtil.create('div', 'legend');
+
+        div.innerHTML += "<h4>Matiere organique</h4>";
+
+        div.innerHTML += '<i style="background: #ffa77f"></i><span>Faible</span><br>';
+
+        div.innerHTML += '<i style="background: #eba987"></i><span>Moyen</span><br>';
+
+        div.innerHTML += '<i style="background: #d55d45"></i><span>Riche</span><br>';
+
+        div.innerHTML += '<i style="background: #c40a0b"></i><span>Trés Riche</span><br>';
+
+        return div;
+
+    };
+
+
+
+    //Texture legend
+
+    var TextureLegend = L.control({
+        position: 'bottomleft'
+    });
+
+    TextureLegend.onAdd = function (map) {
+
+        var div = L.DomUtil.create('div', 'legend');
+
+        div.innerHTML += "<h4>Texture</h4>";
+
+        div.innerHTML += '<i style="background: #FFFF80"></i><span>Argile sableuse</span><br>';
+
+        div.innerHTML += '<i style="background: #FAD155"></i><span>Terreau d\'argile</span><br>';
+
+        div.innerHTML += '<i style="background: #F2A72E"></i><span>Limon argilo-sableux</span><br>';
+
+        div.innerHTML += '<i style="background: #AD5313"></i><span>Terreau</span><br>';
+
+        div.innerHTML += '<i style="background: #6A0000"></i><span>Limon sableuse</span><br>';
+
+        return div;
+
+    };
+
+
+
+    //CEC legend
+
+    var CecLegend = L.control({
+        position: 'bottomleft'
+    });
+
+    CecLegend.onAdd = function (map) {
+
+        var div = L.DomUtil.create('div', 'legend');
+
+        div.innerHTML += "<h4>CEC</h4>";
+
+        div.innerHTML += '<i style="background: #2891c6"></i><span>Trés faible</span><br>';
+
+        div.innerHTML += '<i style="background: #9fc29b"></i><span>Faible</span><br>';
+
+        div.innerHTML += '<i style="background: #fafa65"></i><span>Moyen</span><br>';
+
+        div.innerHTML += '<i style="background: #fa8c33"></i><span>Riche</span><br>';
+
+        div.innerHTML += '<i style="background: #e81015"></i><span>Trés riche</span><br>';
+
+        return div;
+
+    };
+
+    CecLegend.addTo(map);
+
+    /*const dateValue = document.getElementById('dateSelected')
+     */
+
+
+
+    // LEGENDS lOGIC
+
+
+    map.on('baselayerchange', function (eventLayer) {
+
+        // Switch to the Population legend...
+
+        if (eventLayer.name === 'Pente') {
+
+            this.removeControl(PhLegend);
+
+            this.removeControl(MoLegend);
+
+            this.removeControl(TextureLegend);
+
+            this.removeControl(CecLegend);
+
+
+
+            PenteLegend.addTo(this);
+            // document.getElementById("dateSelected").onchange = () => {
+            //     dateSelectedValue = document.getElementById("dateSelected").value
+
+            // }
+
+
+        } else {
+
+            this.removeControl(PenteLegend);
+
+
+
+        }
+
+    });
+
+    map.on('baselayerchange', function (eventLayer) {
+
+        // Switch to the Population legend...
+
+        if (eventLayer.name === 'Ph') {
+
+            this.removeControl(PenteLegend);
+
+            this.removeControl(MoLegend);
+
+            this.removeControl(TextureLegend);
+
+            this.removeControl(CecLegend);
+
+
+
+            PhLegend.addTo(this);
+
+        } else {
+
+            this.removeControl(PhLegend);
+
+
+
+        }
+
+    });
+
+    map.on('baselayerchange', function (eventLayer) {
+
+        // Switch to the Population legend...
+
+        if (eventLayer.name === 'Matiere Organique') {
+
+            this.removeControl(PenteLegend);
+
+            this.removeControl(PhLegend);
+
+            this.removeControl(TextureLegend);
+
+            this.removeControl(CecLegend);
+
+
+
+            MoLegend.addTo(this);
+
+        } else {
+
+            this.removeControl(MoLegend);
+
+
+
+        }
+
+    });
+
+    map.on('baselayerchange', function (eventLayer) {
+
+        // Switch to the Population legend...
+
+        if (eventLayer.name === 'Texture') {
+
+            this.removeControl(PenteLegend);
+
+            this.removeControl(PhLegend);
+
+            this.removeControl(MoLegend);
+
+            this.removeControl(CecLegend);
+
+
+
+            TextureLegend.addTo(this);
+
+        } else {
+
+            this.removeControl(TextureLegend);
+
+
+
+        }
+
+    });
+
+    map.on('baselayerchange', function (eventLayer) {
+
+        // Switch to the Population legend...
+
+        if (eventLayer.name === 'CEC') {
+
+            this.removeControl(PenteLegend);
+
+            this.removeControl(PhLegend);
+
+            this.removeControl(MoLegend);
+
+            this.removeControl(TextureLegend);
+
+
+
+            CecLegend.addTo(this);
+
+        } else {
+
+            this.removeControl(CecLegend);
+
+
+
+        }
+
+    });
+
+
+
+    /////////////////////////////////////////////////////////////POPUp to add info to attribute
+    map.on('click', function (e) {
+
+        console.log(e);
+
+    });
+
+    let shape;
+
+    map.on("draw:created", function (e) {
+        var type = e.layerType;
+        var layer = e.layer;
+
+        console.log(layer.toGeoJSON())
+        const popUp = `<div class="form-group">
+          <label for="note heading">Note heading</label>
+          <input type="text" name='note_heading' class="form-control" placeholder="Enter note heading">
+        </div>
+        <input type="hidden" name="lat" >
+        <input type="hidden" name="lng" >
+        <div class="form-group">
+          <label for="note">Note</label>
+          <textarea class='form-control' name="note_des" >Enter note here</textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      `
+
+        shape = JSON.stringify(layer.toGeoJSON())
+       
+       
+        //layer.bindPopup(`<p>${JSON.stringify(layer.toGeoJSON())}</p>`)
+        layer.bindPopup(popUp)
+        drawnFeatures.addLayer(layer);
+    });
+
+    map.on("draw:edited", function (e) {
+        var layers = e.layers;
+        var type = e.layerType;
+
+        layers.eachLayer(function (layer) {
+            console.log(layer)
+        })
+
+    })
+//leaflet measure
+
+    L.control.measure().addTo(map);
+
+</script>
+
+</script>
+
+
+
+ 
